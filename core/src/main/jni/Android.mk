@@ -246,12 +246,29 @@ include $(BUILD_SHARED_EXECUTABLE)
 
 include $(CLEAR_VARS)
 
-SHADOWSOCKS_SOURCES := local.c \
+SHADOWSOCKS_SOURCES := plain.c local.c \
 	cache.c udprelay.c utils.c netutils.c json.c jconf.c \
 	acl.c http.c tls.c rule.c \
 	crypto.c aead.c stream.c base64.c \
 	plugin.c ppbloom.c \
-	android.c
+	android.c \
+	../libsocks6msg/socks6msg_address.cc \
+        ../libsocks6msg/socks6msg_authreply.cc \
+        ../libsocks6msg/socks6msg_cbindings.cc \
+        ../libsocks6msg/socks6msg_exception.cc \
+        ../libsocks6msg/socks6msg_opreply.cc \
+        ../libsocks6msg/socks6msg_option.cc \
+        ../libsocks6msg/socks6msg_optionset.cc \
+        ../libsocks6msg/socks6msg_request.cc \
+        ../libsocks6msg/socks6msg_sanity.cc \
+        ../libsocks6msg/socks6msg_string.cc \
+        ../libsocks6msg/socks6msg_usrpasswd.cc \
+        ../libsocks6msg/socks6msg_version.cc \
+        ../libsocks6util/socks6util_cbindings.cc \
+        ../libsocks6util/socks6util_idempotence.cc \
+        ../libsocks6util/socks6util_packet.cc \
+        ../libsocks6util/socks6util_socket.cc \
+        ../libsocks6util/socks6util_tfosafety.cc
 
 LOCAL_MODULE    := ss-local
 LOCAL_SRC_FILES := $(addprefix shadowsocks-libev/src/, $(SHADOWSOCKS_SOURCES))
@@ -287,7 +304,7 @@ SHADOWSOCKS_SOURCES := tunnel.c \
 	cache.c udprelay.c utils.c netutils.c json.c jconf.c \
 	crypto.c aead.c stream.c base64.c \
 	plugin.c ppbloom.c \
-	android.c
+	android.c plain.c
 
 LOCAL_MODULE    := ss-tunnel
 LOCAL_SRC_FILES := $(addprefix shadowsocks-libev/src/, $(SHADOWSOCKS_SOURCES))

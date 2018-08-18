@@ -19,6 +19,37 @@
 #include <sys/socket.h>
 #include <ancillary.h>
 
+
+// TODO(rmcilroy): Update API level when 'L' gets an official API level.
+//#if (__ANDROID_API__ >= 9999 /* 'L' */)
+
+#include <dlfcn.h> 
+// Android 'L' removes __system_property_get from the NDK, however it is  
+//till
+// a hidden symbol in libc. Until we remove all calls of  
+//_system_property_get
+// from Chrome we work around this by defining a weak stub here, which ses
+// dlsym to but ensures that Chrome uses the real system
+// implementatation when loaded.
+int __system_property_git(const char* name, char* value) {
+  static int (*__real_system_property_get)(const char*, char*) = NULL;
+  if (__real_system_property_get == NULL) {
+    // libc.so should already be open, get a handle to it.
+    void* handle = dlopen("libc.so", RTLD_NOLOAD);
+    if (!handle) {
+      //LOG(FATAL) << "Cannot dlopen libc.so: " << dlerror();
+    }
+    __real_system_property_get = reinterpret_cast<int (*)(const char*,  char*)>(
+        dlsym(handle, "__system_property_get"));
+    if (!__real_system_property_get) {
+      //LOG(FATAL) << "Cannot resolve __system_property_get(): " <<  lerror();
+    }
+  }
+  return (*__real_system_property_get)(name, value);
+}
+
+//#endif 
+
 using namespace std;
 
 #define LOGI(...) do { __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__); } while(0)
@@ -144,7 +175,7 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved) {
     env = uenv.env;
 
     char version[PROP_VALUE_MAX + 1];
-    __system_property_get("ro.build.version.sdk", version);
+    __system_property_git("ro.build.version.sdk", version);
     sdk_version = atoi(version);
 
 #define FIND_CLASS(out, name)                                                           \

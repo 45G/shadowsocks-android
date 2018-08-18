@@ -7,6 +7,7 @@ apply plugin: 'io.fabric'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
+
 def getCurrentFlavor() {
     String task = getGradle().getStartParameter().getTaskRequests().toString()
     Matcher matcher = Pattern.compile("(assemble|generate)\\w*(Release|Debug)").matcher(task)
@@ -81,6 +82,7 @@ dependencies {
     androidTestImplementation "android.arch.work:work-testing:$workVersion"
     androidTestImplementation "androidx.test:runner:$androidTestVersion"
     androidTestImplementation "androidx.test.espresso:espresso-core:$androidEspressoVersion"
+    compileOnly 'org.glassfish:javax.annotation:10.0-b28'
 }
 repositories {
     mavenCentral()
